@@ -9,6 +9,9 @@ const ACTION_UP = 1
 const ACTION_MOVE = 2
 
 export class ScrcpyControl {
+  private pinch0 = { x: 0, y: 0 }
+  private pinch1 = { x: 0, y: 0 }
+
   constructor(
     private readonly socket: Socket,
     private screenWidth: number,
@@ -52,18 +55,22 @@ export class ScrcpyControl {
   }
 
   pinchStart(x1: number, y1: number, x2: number, y2: number): void {
+    this.pinch0 = { x: x1, y: y1 }
+    this.pinch1 = { x: x2, y: y2 }
     this.touchDown(0, x1, y1)
     this.touchDown(1, x2, y2)
   }
 
   pinchMove(x1: number, y1: number, x2: number, y2: number): void {
+    this.pinch0 = { x: x1, y: y1 }
+    this.pinch1 = { x: x2, y: y2 }
     this.touchMove(0, x1, y1)
     this.touchMove(1, x2, y2)
   }
 
   pinchEnd(): void {
-    this.touchUp(0)
-    this.touchUp(1)
+    this.touchUp(0, this.pinch0.x, this.pinch0.y)
+    this.touchUp(1, this.pinch1.x, this.pinch1.y)
   }
 
   // Forces the scrcpy server to reset the video encoder, which re-emits codec config

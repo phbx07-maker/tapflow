@@ -112,6 +112,8 @@ function loadController(): EmulatorControllerCtor {
 export class EmulatorGrpcClient {
   private readonly raw: RawEmulatorController
   private closed = false
+  private pinch0 = { x: 0, y: 0 }
+  private pinch1 = { x: 0, y: 0 }
 
   /** `raw` is injectable so tests can drive it without a live emulator. */
   constructor(addr: string, raw?: RawEmulatorController) {
@@ -218,6 +220,8 @@ export class EmulatorGrpcClient {
   }
 
   pinchStart(x1: number, y1: number, x2: number, y2: number): Promise<void> {
+    this.pinch0 = { x: x1, y: y1 }
+    this.pinch1 = { x: x2, y: y2 }
     return this.touch([
       { x: x1, y: y1, identifier: 0, pressure: 1 },
       { x: x2, y: y2, identifier: 1, pressure: 1 },
@@ -225,6 +229,8 @@ export class EmulatorGrpcClient {
   }
 
   pinchMove(x1: number, y1: number, x2: number, y2: number): Promise<void> {
+    this.pinch0 = { x: x1, y: y1 }
+    this.pinch1 = { x: x2, y: y2 }
     return this.touch([
       { x: x1, y: y1, identifier: 0, pressure: 1 },
       { x: x2, y: y2, identifier: 1, pressure: 1 },
@@ -233,8 +239,8 @@ export class EmulatorGrpcClient {
 
   pinchEnd(): Promise<void> {
     return this.touch([
-      { x: 0, y: 0, identifier: 0, pressure: 0 },
-      { x: 0, y: 0, identifier: 1, pressure: 0 },
+      { ...this.pinch0, identifier: 0, pressure: 0 },
+      { ...this.pinch1, identifier: 1, pressure: 0 },
     ])
   }
 
