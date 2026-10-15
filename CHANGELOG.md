@@ -25,6 +25,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **Android pinch gestures release at the last finger positions.** Both the gRPC and scrcpy input paths previously lifted both fingers at the top-left corner.
+
 - **Deleting an app works when one of its builds has a session recording, and removes the files.** It used to fail with an error in that case, and otherwise left every build file of the app on disk. Deleting an app now removes its builds' recordings and files the same way the expiry purge does.
 
 ## [0.27.1] - 2026-10-09

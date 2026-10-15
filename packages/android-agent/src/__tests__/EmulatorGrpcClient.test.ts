@@ -164,6 +164,7 @@ describe('EmulatorGrpcClient', () => {
     const client = new EmulatorGrpcClient('x', makeRaw({ sendTouch: sendTouch as never }))
 
     await client.pinchStart(10, 20, 30, 40)
+    await client.pinchMove(11, 21, 31, 41)
     await client.pinchEnd()
 
     expect(sendTouch.mock.calls[0][0]).toEqual({
@@ -173,9 +174,13 @@ describe('EmulatorGrpcClient', () => {
       ],
       display: 0,
     })
-    const end = sendTouch.mock.calls[1][0] as { touches: Array<{ identifier: number; pressure: number }> }
-    expect(end.touches.map((t) => t.pressure)).toEqual([0, 0])
-    expect(end.touches.map((t) => t.identifier)).toEqual([0, 1])
+    expect(sendTouch.mock.calls[2][0]).toEqual({
+      touches: [
+        { x: 11, y: 21, identifier: 0, pressure: 0 },
+        { x: 31, y: 41, identifier: 1, pressure: 0 },
+      ],
+      display: 0,
+    })
   })
 
   it('rejects when a touch RPC errors', async () => {
